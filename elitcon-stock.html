@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Stock Price</title>
+  <!-- If you want to use Roboto exactly like in Figma: -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap"
+    rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #fafafa;
+    }
+    #stock-info {
+      font-family: 'Roboto', sans-serif;
+      font-size: 1.5rem;           /* ~18px at 120% zoom */
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    #stock-info .symbol {
+      font-weight: 500;
+    }
+    #stock-info .price {
+      font-weight: 400;
+    }
+    #stock-info .change {
+      display: flex;
+      align-items: center;
+      font-weight: 500;
+    }
+    /* green on up, red on down */
+    #stock-info .change.up { color: green; }
+    #stock-info .change.down { color: red; }
+    /* little arrow */
+    #stock-info .change .arrow {
+      font-size: 1rem;
+      margin-left: 0.2rem;
+    }
+  </style>
+</head>
+<body>
+  <div id="stock-info">Loading…</div>
+
+  <script>
+    fetch('https://stock-value.onrender.com/price')
+      .then(resp => resp.json())
+      .then(data => {
+        // assume API returns:
+        // data.symbol           e.g. "BSE"
+        // data.lastPrice        e.g. 60.20
+        // data.prevClose        e.g. 1.10    
+        // data.percentageChange e.g. 1.85     
+
+        const symbol    = data.symbol || data.companyName;
+        const last      = parseFloat(data.lastPrice);
+        const prev      = data.prevClose != null
+                          ? parseFloat(data.prevClose)
+                          // if you don't have prevClose,
+                          // approximate from lastPrice & percentChange:
+                          : last / (1 + parseFloat(data.percentageChange) / 100);
+
+        // compute absolute change
+        const diff      = last - prev;
+        const sign      = diff >= 0 ? '+' : '';
+        const arrow     = diff >= 0 ? '▲' : '▼';
+        const cssClass  = diff >= 0 ? 'up' : 'down';
+
+        // currency code – tweak if your API returns something else
+        const currency  = data.currency || 'INR';
+
+        document.getElementById('stock-info').innerHTML = `
+          <span class="symbol">${symbol}</span>
+          <span class="price">${last.toFixed(2)}&nbsp;${currency}</span>
+          <span class="change ${cssClass}">
+            ${sign}${diff.toFixed(2)}
+            <span class="arrow">${arrow}</span>
+          </span>
+        `;
+      })
+      .catch(err => {
+        console.error(err);
+        document.getElementById('stock-info').textContent = 'Error fetching data';
+      });
+  </script>
+</body>
+</html>
