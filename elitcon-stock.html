@@ -42,6 +42,10 @@
       font-size: 1rem;
       margin-left: 0.2rem;
     }
+
+    #stock-info .change {
+  font-size: 0.9rem;
+}
   </style>
 </head>
 <body>
@@ -57,7 +61,8 @@
         // data.prevClose        e.g. 1.10    
         // data.percentageChange e.g. 1.85     
 
-        const symbol    = data.symbol || data.companyName;
+        // const symbol    = data.symbol || data.companyName;
+        const symbol    = "BSE";
         const last      = parseFloat(data.lastPrice);
         const prev      = data.prevClose != null
                           ? parseFloat(data.prevClose)
@@ -77,10 +82,10 @@
         document.getElementById('stock-info').innerHTML = `
           <span class="symbol">${symbol}</span>
           <span class="price">${last.toFixed(2)}&nbsp;${currency}</span>
-          <span class="change ${cssClass}">
-            ${sign}${diff.toFixed(2)}
-            <span class="arrow">${arrow}</span>
-          </span>
+      
+          <span class="change ${cssClass}">(${sign}${diff.toFixed(2)} <span class="arrow">${arrow}</span>)</span>
+
+
         `;
       })
       .catch(err => {

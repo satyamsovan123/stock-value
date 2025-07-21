@@ -41,7 +41,8 @@ async function fetchAngelOne() {
   if (j.success && Array.isArray(j.data) && j.data.length) {
     const lastTick = j.data[j.data.length - 1];
     return {
-      companyName: "Elitecon International",
+      // companyName: "Elitecon International",
+      companyName: "BSE",
       lastPrice: parseFloat(lastTick.price),
       percentageChange: 0,
     };
@@ -60,7 +61,8 @@ app.get("/price", async (req, res) => {
     const percentageChange = info?.percentageChange ?? 0;
 
     res.json({
-      companyName: "Elitecon International",
+      // companyName: "Elitecon International",
+      companyName: "BSE",
       lastPrice: parseFloat(lastPrice.toFixed(2)),
       percentageChange: parseFloat(percentageChange.toFixed(2)),
     });
